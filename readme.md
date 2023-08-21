@@ -10,10 +10,6 @@ The implementation is based on the Spring Boot framework, version 3.0.2.
 In the next sections we will talk about different classes we implemented.
 
 ## Classes
-This section is as follows - 
-1. Model class
-2. Service class
-3. Controller class
 
 ### BookingModel
 
@@ -37,7 +33,6 @@ The BookingModel class represents a booking request from a customer to acquire a
 
 ### BusinessEntry
 The BusinessEntry class is a core component of the project that handles various business logic operations related to bookings. It encapsulates methods to manage and retrieve booking information, compute statistics, and interact with a blockchain network for hash retrieval. 
-
 
 
 #### Methods
@@ -139,9 +134,9 @@ Transaction manager is created to handle transaction signing.
 ## doBusiness
 The doBusiness method takes the retrieved department based on bookingId and do 2 things:
 1. Creates an Hierarchy of the departments.
-2. For the given department, gives an statistical analysis of how many bookings are based on this department.
+2. For the given department, gives an statistical analysis (in percentage) of how many bookings are based on this department.
 
-For example, this is one output for doBusiness:
+For example, this is one output for doBusiness for department "warm123 dept":
 
 [
     25,
@@ -158,3 +153,24 @@ For example, this is one output for doBusiness:
         ]
     ]
 ]
+
+## Testing
+We have implemented unit testing for:
+1. To check if booking successful
+2. Booking failed for different reasons (e.g. - invalid email)
+3. Update booking
+4. Get booking by id
+5. Get booking id by department
+6. Get used currencies
+7. Get sum of price based on currencies
+
+## Recommendation for the next step
+1. Implement authentication system
+2. Sorting and pagination for a scalable solution
+3. Implement frontend and database
+4. Implement with Ethereum mainnet
+5. Deployment with Docker/ cloud platforms such as AWS
+6. Security reviewing
+
+## Time required
+Code: 7 hours. Testing: 2 hours. Documentation: 2 hours
