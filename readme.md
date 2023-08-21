@@ -154,6 +154,10 @@ For example, this is one output for doBusiness for department "warm123 dept":
     ]
 ]
 
+## Swagger UI
+One can test with the endpoints using Swagger UI at link: http://localhost:8080/swagger-ui/index.html
+(note, you must run the code first in either Intellij or VS code before you can interract with swagger ui)
+
 ## Testing
 We have implemented unit testing for:
 1. To check if booking successful
