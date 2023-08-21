@@ -19,7 +19,7 @@ This section is as follows -
 
 The BookingModel class represents a booking request from a customer to acquire a product. This class contains various attributes that capture important information about the booking. Additionally, it enforces data validation rules using Java's Bean Validation annotations to ensure the integrity of the data.
 
-#### Attributes
+#### Attributes and Data Validation
 1. bookingId: A unique identifier generated as a UUID when a new booking instance is created.
 
 2. description: A mandatory field that provides a description of the booking request. It cannot be blank and must have a non-null value.
@@ -34,20 +34,10 @@ The BookingModel class represents a booking request from a customer to acquire a
 
 7. department: A mandatory field indicating the department related to the booking request. It cannot be blank and must have a non-null value.
 
-#### Data Validation
-1. description: Ensures that the description is not null and not blank.
-2. price: Ensures that the price is a positive numeric value.
-3. currency: Ensures that the currency is not null and not blank.
-4. subscription_start_date: Ensures that the subscription start date is a positive timestamp value.
-5. email: Ensures that the email address is valid and not empty.
-6. department: Ensures that the department is not null and not blank.
-
 
 ### BusinessEntry
 The BusinessEntry class is a core component of the project that handles various business logic operations related to bookings. It encapsulates methods to manage and retrieve booking information, compute statistics, and interact with a blockchain network for hash retrieval. 
 
-#### Purpose
-The purpose of the BusinessEntry class is to provide functionalities for managing bookings and performing business-related operations. It serves as an intermediary between the RESTful web service and the underlying data structures, allowing for CRUD (Create, Read, Update, Delete) operations on booking objects.
 
 
 #### Methods
@@ -82,89 +72,55 @@ The BusinessController class is responsible for handling various HTTP endpoints 
 #### Endpoints
 
 ###### Dashboard Endpoint
-URL: /bookingservice/
-
-HTTP Method: GET
+URL: /bookingservice/ (HTTP Method: GET)
 
 Description: Returns a simple greeting message indicating the version of the web service.
 
 ###### Create Booking Endpoint
-URL: /bookingservice/bookings
-
-HTTP Method: POST
-
-Request Body: A valid JSON representation of a BookingModel object.
+URL: /bookingservice/bookings (HTTP Method: POST)
 
 Description: Creates a new booking using the provided booking details. Generates a unique booking ID, calculates a hash value, and simulates sending an email. Returns a response indicating the success or failure of the creation.
 
 
-###### Update Booking Endpoint
-URL: /bookingservice/bookings/{booking_id}
+###### Update Booking Endpoint 
+URL: /bookingservice/bookings/{booking_id} (HTTP Method: PUT)
 
-HTTP Method: PUT
-
-Path Variable: booking_id - The ID of the booking to be updated.
-
-Request Body: A valid JSON representation of an updated BookingModel object.
-
-Description: Updates an existing booking with new details. Calculates a hash value, updates the booking in the registry, and simulates sending an email. Returns a response indicating the success or failure of the update.
+Description: Updates an existing booking with new details. Calculates a hash value, updates the booking in the registry, and simulates sending an email. If bookingId does not exist, then create a new booking.
 
 
-###### Get Booking by ID Endpoint
-URL: /bookingservice/bookings/{booking_id}
-
-HTTP Method: GET
-
-Path Variable: booking_id - The ID of the booking to retrieve.
+###### Get Booking by ID Endpoint 
+URL: /bookingservice/bookings/{booking_id} (HTTP Method: GET)
 
 Description: Retrieves booking details by its ID. Returns the booking details if found, or a NOT FOUND response.
 
 
 ###### Get Booking IDs by Department Endpoint
-URL: /bookingservice/bookings/department/{department}
-
-HTTP Method: GET
-
-Path Variable: department - The department name to filter bookings.
+URL: /bookingservice/bookings/department/{department} (HTTP Method: GET)
 
 Description: Retrieves a list of booking IDs associated with a specific department. Returns the list of IDs if found, or a NOT FOUND response.
 
 
 ###### Get Used Currencies Endpoint
-URL: /bookingservice/bookings/currencies
-
-HTTP Method: GET
+URL: /bookingservice/bookings/currencies (HTTP Method: GET)
 
 Description: Retrieves a list of unique currency codes used in bookings. Returns the list of currencies if found, or a NOT FOUND response.
 
 ###### Get Sum by Currency Endpoint
-URL: /bookingservice/sum/{currency}
-
-HTTP Method: GET
-
-Path Variable: currency - The currency code to calculate the sum for.
+URL: /bookingservice/sum/{currency} (HTTP Method: GET)
 
 Description: Calculates the sum of all booking prices in a specific currency. Returns the sum if bookings exist in that currency, or a NOT FOUND response.
 
 
 ###### Get Booking Proof Endpoint
-URL: /bookingservice/bookings/proof/{transaction_id}
+URL: /bookingservice/bookings/proof/{transaction_id} (HTTP Method: GET)
 
-HTTP Method: GET
-
-Path Variable: transaction_id - The transaction ID to retrieve booking proof for.
-
-Description: Retrieves booking proof by matching transaction ID with hash value. Returns proof details if found, or a NOT FOUND or BAD REQUEST response based on validation results.
+Description: Retrieves booking proof by matching transaction ID with hash value. Returns proof details if found, or a NOT FOUND or BAD REQUEST response based on validation results. Also checks (using getHash()) if the hash value is same as the hash retrieved from the testnet.
 
 
 ###### Get Department by Booking ID Endpoint
-URL: /bookingservice/departments/{booking_id}
+URL: /bookingservice/departments/{booking_id} (HTTP Method: GET)
 
-HTTP Method: GET
-
-Path Variable: booking_id - The booking ID to retrieve department details for.
-
-Description: Retrieves department details associated with a booking ID. Returns department information if found, or a NOT FOUND response.
+Description: Retrieves department details associated with a booking ID. Returns department information if found, or a NOT FOUND response. Use doBusiness() based on the received department.
 
 
 ## Connecting with blockchain Testnetwork
@@ -180,5 +136,25 @@ To send a hash to the blockchain and obtain a transaction hash, the method sendh
 
 Transaction manager is created to handle transaction signing.
 
+## doBusiness
+The doBusiness method takes the retrieved department based on bookingId and do 2 things:
+1. Creates an Hierarchy of the departments.
+2. For the given department, gives an statistical analysis of how many bookings are based on this department.
 
+For example, this is one output for doBusiness:
 
+[
+    25,
+    [
+        [
+            "admin"
+        ],
+        [
+            "cooler dept",
+            "cool dept"
+        ],
+        [
+            "warm123 dept"
+        ]
+    ]
+]
